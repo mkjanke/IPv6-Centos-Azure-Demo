@@ -263,4 +263,7 @@ __pycache__/
 /Ipv6Centos/Deployment.targets
 /Ipv6Centos/Ipv6Centos.deployproj
 /Ipv6Centos/Ipv6Centos.sln
-/Ipv6Centos/azuredeploy.json
+/VSTS/Deploy-AzureResourceGroup.ps1
+/VSTS/Deployment.targets
+/VSTS/Ipv6Centos.deployproj
+/VSTS/Ipv6Centos.sln
