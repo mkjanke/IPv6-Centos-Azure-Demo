@@ -259,3 +259,8 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/Ipv6Centos/Deploy-AzureResourceGroup.ps1
+/Ipv6Centos/Deployment.targets
+/Ipv6Centos/Ipv6Centos.deployproj
+/Ipv6Centos/Ipv6Centos.sln
+/Ipv6Centos/azuredeploy.json
