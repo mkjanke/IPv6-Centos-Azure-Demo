@@ -2,6 +2,12 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "systemName": {
+      "type": "string",
+      "metadata": {
+        "description": "System Name - prepended to all objects"
+      }
+    },
     "adminUsername": {
       "type": "string",
       "metadata": {
@@ -28,28 +34,33 @@
     }
   },
   "variables": {
-    "vmNamePrefix": "myIPv6VM",
-    "nicNamePrefix": "IPv6Nic",
-    "availabilitySetName": "myIPv6AvSet",
-    "addressPrefix": "10.0.0.0/16",
-    "subnetName": "myIPv4Subnet",
-    "subnetPrefix": "10.0.0.0/24",
-    "vnetName": "myIPv4VNet",
+    "vmNamePrefix": "[concat(parameters('systemName'),'VM')]",
+    "nicNamePrefix": "[concat(parameters('systemName'),'Nic')]",
+    "availabilitySetName": "[concat(parameters('systemName'), 'AvSet')]",
+    "addressPrefix": "10.254.0.0/16",
+    "subnetName": "[concat(parameters('systemName'),'IPv4Subnet')]",
+    "subnetPrefix": "10.254.0.0/24",
+    "vnetName": "[concat(parameters('systemName'),'IPv4VNet')]",
     "ipv4PrivateIPAddressType": "Dynamic",
     "ipv6PrivateIPAddressType": "Dynamic",
     "numberOfInstances": 2,
-    "ipv6PublicIPAddressName": "myIPv6PublicIP",
-    "ipv4PublicIPAddressName": "myIPv4PublicIP",
+    "ipv6PublicIPAddressName": "[concat(parameters('systemName'),'IPv6PublicIP')]",
+    "ipv4PublicIPAddressName": "[concat(parameters('systemName'),'IPv4PublicIP')]",
     "ipv4PublicIPAddressType": "Dynamic",
     "ipv6PublicIPAddressType": "Dynamic",
-    "lbName": "myIPv4IPv6LB",
+    "lbName": "[concat(parameters('systemName'),'IPv4IPv6LB')]",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
     "ipv4FrontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEndIPv4')]",
     "ipv6FrontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEndIPv6')]",
     "ipv4LbBackendPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPoolIPv4')]",
     "ipv6LbBackendPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPoolIPv6')]",
     "ipv4ipv6lbProbeName": "tcpProbeIPv4IPv6",
-    "ipv4ipv6lbProbeID": "[concat(variables('lbID'),'/probes/', variables('ipv4ipv6lbProbeName'))]"
+    "ipv4ipv6lbProbeID": "[concat(variables('lbID'),'/probes/', variables('ipv4ipv6lbProbeName'))]",
+    "vmSize": "Standard_A0",
+    "vmStorageAccountContainerName": "vhds",
+    "dataDiskSize": "5",
+    "imageOffer": "CentOS",
+    "imagePublisher": "OpenLogic"
   },
   "resources": [
     {
@@ -140,7 +151,7 @@
               ],
               "loadBalancerInboundNatRules": [
                 {
-                  "id": "[concat(variables('lbID'),'/inboundNatRules/RDP-VM', copyindex())]"
+                  "id": "[concat(variables('lbID'),'/inboundNatRules/', parameters('systemName'), '-VM', copyindex())]"
                 }
               ]
             }
@@ -198,33 +209,33 @@
         ],
         "inboundNatRules": [
           {
-            "name": "RDP-VM0",
+            "name": "[concat(parameters('systemName'),'-VM0')]",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('ipv4FrontEndIPConfigID')]"
               },
               "protocol": "tcp",
               "frontendPort": 50001,
-              "backendPort": 3389,
+              "backendPort": 22,
               "enableFloatingIP": false
             }
           },
           {
-            "name": "RDP-VM1",
+            "name": "[concat(parameters('systemName'),'-VM1')]",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('ipv4FrontEndIPConfigID')]"
               },
               "protocol": "tcp",
               "frontendPort": 50002,
-              "backendPort": 3389,
+              "backendPort": 22,
               "enableFloatingIP": false
             }
           }
         ],
         "loadBalancingRules": [
           {
-            "name": "LBRuleIPv4",
+            "name": "LBRuleHttpIPv4",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('ipv4FrontEndIPConfigID')]"
@@ -243,7 +254,7 @@
             }
           },
           {
-            "name": "LBRuleIPv6",
+            "name": "LBRuleHttpIPv6",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('ipv6FrontEndIPConfigID')]"
@@ -254,6 +265,42 @@
               "protocol": "Tcp",
               "frontendPort": 80,
               "backendPort": 8080,
+              "probe": {
+                "id": "[variables('ipv4ipv6lbProbeID')]"
+              }
+            }
+          },
+          {
+            "name": "LBRuleHttpsIPv4",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('ipv4FrontEndIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('ipv4LbBackendPoolID')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 443,
+              "backendPort": 443,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 5,
+              "probe": {
+                "id": "[variables('ipv4ipv6lbProbeID')]"
+              }
+            }
+          },
+          {
+            "name": "LBRuleHttpsIPv6",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('ipv6FrontEndIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('ipv6LbBackendPoolID')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 443,
+              "backendPort": 8443,
               "probe": {
                 "id": "[variables('ipv4ipv6lbProbeID')]"
               }
@@ -291,7 +338,7 @@
           "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('availabilitySetName'))]"
         },
         "hardwareProfile": {
-          "vmSize": "Standard_DS1_v2"
+          "vmSize": "[variables('vmSize')]"
         },
         "osProfile": {
           "computerName": "[concat(variables('vmNamePrefix'), copyIndex())]",
@@ -300,12 +347,13 @@
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "MicrosoftWindowsServer",
-            "offer": "WindowsServer",
-            "sku": "2012-R2-Datacenter",
+            "offer": "[variables('imageOffer')]",
+            "publisher": "[variables('imagePublisher')]",
+            "sku": "7.1",
             "version": "latest"
           },
           "osDisk": {
+            "osType":  "Linux",
             "createOption": "FromImage"
           }
         },
