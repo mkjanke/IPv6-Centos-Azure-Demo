@@ -215,6 +215,7 @@ UpgradeLog*.htm
 *.ldf
 
 # Business Intelligence projects
+
 *.rdl.data
 *.bim.layout
 *.bim_*.settings
@@ -263,6 +264,7 @@ __pycache__/
 /Ipv6Centos/Deployment.targets
 /Ipv6Centos/Ipv6Centos.deployproj
 /Ipv6Centos/Ipv6Centos.sln
+/VSTS/
 /VSTS/Deploy-AzureResourceGroup.ps1
 /VSTS/Deployment.targets
 /VSTS/Ipv6Centos.deployproj
