@@ -3,16 +3,16 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "systemName": {
-      "value": "isbogus"
+      "value": "bogus"
     },
     "adminUsername": {
       "value": "adminuser"
     },
     "dnsNameforIPv4LbIP": {
-      "value": "isbogus"
+      "value": "bogus"
     },
     "dnsNameforIPv6LbIP": {
-      "value": "isbogus"
+      "value": "bogus"
     }
   }
 }
