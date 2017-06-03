@@ -1,9 +1,9 @@
 # IPv6-Centos-Azure-Demo
-Demo template for two load balanced IPV6 enabled Centos servers in Azure. 
+Demo template for two load balanced IPV6 enabled Centos servers in Azure. Uses most of the Microsoft template linked below. Modified to build Centos servers instead of Windows servers. 
 
 References:
 
-Microsoft template (Creates Windows Servers):
+Microsoft docs and template:
 
 https://docs.microsoft.com/en-us/azure/load-balancer/load-balancer-ipv6-internet-template
 
