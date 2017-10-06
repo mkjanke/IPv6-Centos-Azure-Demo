@@ -31,6 +31,12 @@
       "metadata": {
         "description": "DNS prefix for IPv6 IP Address of the load balancer. It must be lowercase and match the regex: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$."
       }
+    },
+    "imageOffer": {
+      "type": "string",
+      "metadata": {
+        "description":  "Deployment Image - defaults to centos"
+      }
     }
   },
   "variables": {
@@ -57,9 +63,6 @@
     "ipv4ipv6lbProbeName": "tcpProbeIPv4IPv6",
     "ipv4ipv6lbProbeID": "[concat(variables('lbID'),'/probes/', variables('ipv4ipv6lbProbeName'))]",
     "vmSize": "Standard_A0",
-    "vmStorageAccountContainerName": "vhds",
-    "dataDiskSize": "5",
-    "imageOffer": "CentOS",
     "imagePublisher": "OpenLogic"
   },
   "resources": [

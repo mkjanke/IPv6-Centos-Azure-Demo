@@ -13,6 +13,9 @@
     },
     "dnsNameforIPv6LbIP": {
       "value": "bogus"
+    },
+    "imageOffer": {
+      "value": "centos"
     }
   }
 }
