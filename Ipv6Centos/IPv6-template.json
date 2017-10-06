@@ -350,7 +350,7 @@
         },
         "storageProfile": {
           "imageReference": {
-            "offer": "[variables('imageOffer')]",
+            "offer": "[parameters('imageOffer')]",
             "publisher": "[variables('imagePublisher')]",
             "sku": "7.1",
             "version": "latest"
